@@ -21,10 +21,10 @@ import { browseMoviesFn, getGenresFn } from "@/lib/tmdb.functions";
 import { SORT_OPTIONS, isSortValue, type SortValue } from "@/lib/tmdb-types";
 
 type Search = {
-  q?: string;
-  genre?: number;
-  sort?: SortValue;
-  min?: number;
+  q?: string | undefined;
+  genre?: number | undefined;
+  sort?: SortValue | undefined;
+  min?: number | undefined;
 };
 
 export const Route = createFileRoute("/")({
