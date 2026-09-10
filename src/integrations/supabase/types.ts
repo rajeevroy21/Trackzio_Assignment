@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tmdb_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          expires_at: string
+          payload: Json
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          expires_at: string
+          payload: Json
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          expires_at?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
+      wishlist_items: {
+        Row: {
+          created_at: string
+          id: string
+          movie_id: number
+          overview: string | null
+          poster_path: string | null
+          release_date: string | null
+          title: string
+          user_id: string
+          vote_average: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movie_id: number
+          overview?: string | null
+          poster_path?: string | null
+          release_date?: string | null
+          title: string
+          user_id: string
+          vote_average?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movie_id?: number
+          overview?: string | null
+          poster_path?: string | null
+          release_date?: string | null
+          title?: string
+          user_id?: string
+          vote_average?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
