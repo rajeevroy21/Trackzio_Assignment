@@ -165,12 +165,12 @@ function normalisePage(raw: RawMovie | null): MoviePage {
 // ---------------------------- public server API ----------------------------
 
 export type BrowseParams = {
-  query?: string;
-  genreId?: number;
-  sort?: string;
-  minRating?: number;
-  year?: number;
-  page?: number;
+  query?: string | undefined;
+  genreId?: number | undefined;
+  sort?: string | undefined;
+  minRating?: number | undefined;
+  year?: number | undefined;
+  page?: number | undefined;
 };
 
 export async function browseMovies(params: BrowseParams): Promise<MoviePage> {
