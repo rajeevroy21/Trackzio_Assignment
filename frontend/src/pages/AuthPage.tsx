@@ -16,7 +16,6 @@ export function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sentConfirmation, setSentConfirmation] = useState(false);
 
   useEffect(() => {
     if (signedIn) navigate("/wishlist");
@@ -30,10 +29,15 @@ export function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: { emailRedirectTo: `${window.location.origin}/wishlist` },
         });
         if (error) throw error;
-        if (!data.session) setSentConfirmation(true);
+        if (data.session) {
+          navigate("/wishlist");
+        } else {
+          setMode("signin");
+          toast.success("Account created. Sign in to continue.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -70,60 +74,53 @@ export function AuthPage() {
           Your wishlist is saved to your account, so it's there on every device.
         </p>
 
-        {sentConfirmation ? (
-          <div className="mt-6 rounded-xl border border-border bg-secondary/60 p-4 text-sm text-foreground">
-            Check your inbox — we sent a confirmation link to <strong>{email}</strong>. Once you confirm, come
-            back and sign in.
+        <>
+          <Button variant="outline" className="mt-6 w-full" onClick={() => void google()} disabled={busy}>
+            Continue with Google
+          </Button>
+
+          <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
+            <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
           </div>
-        ) : (
-          <>
-            <Button variant="outline" className="mt-6 w-full" onClick={() => void google()} disabled={busy}>
-              Continue with Google
-            </Button>
 
-            <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
+          <form onSubmit={submit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                required
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={busy}>
+              {busy && <Loader2 className="size-4 animate-spin" aria-hidden />}
+              {mode === "signin" ? "Sign in" : "Create account"}
+            </Button>
+          </form>
 
-            <form onSubmit={submit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  minLength={6}
-                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                  required
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={busy}>
-                {busy && <Loader2 className="size-4 animate-spin" aria-hidden />}
-                {mode === "signin" ? "Sign in" : "Create account"}
-              </Button>
-            </form>
-
-            <button
-              type="button"
-              className="mt-4 w-full text-sm text-muted-foreground underline"
-              onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-            >
-              {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
-            </button>
-          </>
-        )}
+          <button
+            type="button"
+            className="mt-4 w-full text-sm text-muted-foreground underline"
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          >
+            {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
+          </button>
+        </>
       </div>
 
       <Link to="/" className="mt-6 text-center text-sm text-muted-foreground underline">

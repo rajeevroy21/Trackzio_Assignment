@@ -37,7 +37,7 @@ Create `.env` inside `backend/`:
 ```env
 PORT=3000
 NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:5174
 
 TMDB_API_KEY=your_tmdb_api_key
 
