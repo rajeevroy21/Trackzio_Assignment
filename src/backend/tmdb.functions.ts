@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import type { Genre, MovieDetail, MoviePage } from "./tmdb-types";
+import type { Genre, MovieDetail, MoviePage } from "@/shared/tmdb-types";
 
 const browseSchema = z.object({
   query: z.string().max(120).optional(),
@@ -22,7 +22,7 @@ export type BrowseResult =
 export const browseMoviesFn = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => browseSchema.parse(input))
   .handler(async ({ data }): Promise<BrowseResult> => {
-    const mod = await import("./tmdb.server");
+    const mod = await import("@/backend/tmdb.server");
     try {
       return { ok: true, data: await mod.browseMovies(data) };
     } catch (error) {
@@ -31,7 +31,7 @@ export const browseMoviesFn = createServerFn({ method: "GET" })
   });
 
 export const getGenresFn = createServerFn({ method: "GET" }).handler(async (): Promise<Genre[]> => {
-  const mod = await import("./tmdb.server");
+  const mod = await import("@/backend/tmdb.server");
   try {
     return await mod.getGenres();
   } catch {
@@ -47,7 +47,7 @@ export const getMovieFn = createServerFn({ method: "GET" })
     }): Promise<
       { ok: true; data: MovieDetail | null } | { ok: false; reason: "config" | "unavailable"; message: string }
     > => {
-      const mod = await import("./tmdb.server");
+      const mod = await import("@/backend/tmdb.server");
       try {
         return { ok: true, data: await mod.getMovieDetail(data.id) };
       } catch (error) {
@@ -56,7 +56,7 @@ export const getMovieFn = createServerFn({ method: "GET" })
     },
   );
 
-function failure(error: unknown, mod: typeof import("./tmdb.server")) {
+function failure(error: unknown, mod: typeof import("@/backend/tmdb.server")) {
   console.error("[tmdb]", error);
   if (error instanceof mod.TmdbConfigError) {
     return {

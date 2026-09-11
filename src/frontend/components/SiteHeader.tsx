@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Clapperboard, Heart, LogOut, User as UserIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/frontend/components/ui/button";
+import { useAuth } from "@/frontend/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 export function SiteHeader() {

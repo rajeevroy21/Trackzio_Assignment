@@ -7,7 +7,7 @@
 //    so we can serve stale data when TMDB is slow, rate limited or down
 //  - bound every upstream call with a timeout and a small retry budget
 
-import type { Genre, MovieDetail, MoviePage, MovieSummary } from "./tmdb-types";
+import type { Genre, MovieDetail, MoviePage, MovieSummary } from "@/shared/tmdb-types";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";

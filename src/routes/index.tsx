@@ -4,21 +4,21 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Loader2, Search, SearchX, SlidersHorizontal } from "lucide-react";
 
-import { MovieCard, MovieCardSkeleton, MovieGrid } from "@/components/MovieCard";
-import { StateMessage } from "@/components/StateMessage";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { MovieCard, MovieCardSkeleton, MovieGrid } from "@/frontend/components/MovieCard";
+import { StateMessage } from "@/frontend/components/StateMessage";
+import { Button } from "@/frontend/components/ui/button";
+import { Input } from "@/frontend/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useWishlist } from "@/hooks/useWishlist";
-import { browseMoviesFn, getGenresFn } from "@/lib/tmdb.functions";
-import { SORT_OPTIONS, isSortValue, type SortValue } from "@/lib/tmdb-types";
+} from "@/frontend/components/ui/select";
+import { useDebouncedValue } from "@/frontend/hooks/useDebouncedValue";
+import { useWishlist } from "@/frontend/hooks/useWishlist";
+import { browseMoviesFn, getGenresFn } from "@/backend/tmdb.functions";
+import { SORT_OPTIONS, isSortValue, type SortValue } from "@/shared/tmdb-types";
 
 type Search = {
   q?: string | undefined;
