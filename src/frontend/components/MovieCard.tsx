@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, Star, Film } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import type { MovieSummary } from "@/lib/tmdb-types";
+import type { MovieSummary } from "@/shared/tmdb-types";
 
 type Props = {
   movie: MovieSummary;

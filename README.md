@@ -30,13 +30,13 @@ The wishlist and cache tables are created by the migration in
 
 ### The backend as an abstraction layer
 The browser **never** calls TMDB. All upstream access lives in
-`src/lib/tmdb.server.ts`; the client talks to typed server functions in
-`src/lib/tmdb.functions.ts`. This keeps the API key server-side and lets the
+`src/backend/tmdb.server.ts`; the client talks to typed server functions in
+`src/backend/tmdb.functions.ts`. This keeps the API key server-side and lets the
 app own its data shape:
 
 - **Normalisation**: TMDB payloads are messy and incomplete (missing posters,
   titles in `name` vs `title`, null runtimes). Every record is normalised into
-  a `MovieSummary`/`MovieDetail` (`src/lib/tmdb-types.ts`); unusable records
+  a `MovieSummary`/`MovieDetail` (`src/shared/tmdb-types.ts`); unusable records
   are dropped. Image URLs are resolved server-side.
 - **Caching**: responses are cached in the `tmdb_cache` Postgres table with
   TTLs (30 min for browsing, 5 min for search, 24 h for genres, 6 h for

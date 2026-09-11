@@ -2,9 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
-import { addToWishlistFn, listWishlistFn, removeFromWishlistFn } from "@/lib/wishlist.functions";
-import type { WishlistEntry } from "@/lib/wishlist.functions";
-import type { MovieSummary } from "@/lib/tmdb-types";
+import { addToWishlistFn, listWishlistFn, removeFromWishlistFn } from "@/backend/wishlist.functions";
+import type { WishlistEntry } from "@/backend/wishlist.functions";
+import type { MovieSummary } from "@/shared/tmdb-types";
 import { useAuth } from "./useAuth";
 
 export const wishlistQueryKey = ["wishlist"] as const;

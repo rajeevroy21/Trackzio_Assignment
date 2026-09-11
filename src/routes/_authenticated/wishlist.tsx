@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AlertTriangle, HeartOff } from "lucide-react";
 
-import { MovieCard, MovieCardSkeleton, MovieGrid } from "@/components/MovieCard";
-import { StateMessage } from "@/components/StateMessage";
-import { useWishlist } from "@/hooks/useWishlist";
+import { MovieCard, MovieCardSkeleton, MovieGrid } from "@/frontend/components/MovieCard";
+import { StateMessage } from "@/frontend/components/StateMessage";
+import { useWishlist } from "@/frontend/hooks/useWishlist";
 
 export const Route = createFileRoute("/_authenticated/wishlist")({
   head: () => ({

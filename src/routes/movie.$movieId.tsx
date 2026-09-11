@@ -3,11 +3,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, ArrowLeft, Heart, Star } from "lucide-react";
 
-import { MovieCard, MovieGrid } from "@/components/MovieCard";
-import { StateMessage } from "@/components/StateMessage";
-import { Button } from "@/components/ui/button";
-import { useWishlist } from "@/hooks/useWishlist";
-import { getMovieFn } from "@/lib/tmdb.functions";
+import { MovieCard, MovieGrid } from "@/frontend/components/MovieCard";
+import { StateMessage } from "@/frontend/components/StateMessage";
+import { Button } from "@/frontend/components/ui/button";
+import { useWishlist } from "@/frontend/hooks/useWishlist";
+import { getMovieFn } from "@/backend/tmdb.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/movie/$movieId")({

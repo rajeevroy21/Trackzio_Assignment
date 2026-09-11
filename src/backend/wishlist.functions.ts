@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-import type { MovieSummary } from "./tmdb-types";
+import type { MovieSummary } from "@/shared/tmdb-types";
 
 const movieSchema = z.object({
   id: z.number().int().positive(),
