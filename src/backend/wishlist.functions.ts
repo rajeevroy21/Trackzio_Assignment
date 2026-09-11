@@ -40,7 +40,7 @@ export const listWishlistFn = createServerFn({ method: "GET" })
 
 export const addToWishlistFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => movieSchema.parse(input))
+  .validator((input: unknown) => movieSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("wishlist_items").upsert(
       {
@@ -60,7 +60,7 @@ export const addToWishlistFn = createServerFn({ method: "POST" })
 
 export const removeFromWishlistFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.number().int().positive() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.number().int().positive() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("wishlist_items").delete().eq("movie_id", data.id);
     if (error) throw new Error(error.message);

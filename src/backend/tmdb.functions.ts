@@ -20,7 +20,7 @@ export type BrowseResult =
   | { ok: false; reason: "config" | "unavailable"; message: string };
 
 export const browseMoviesFn = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => browseSchema.parse(input))
+  .validator((input: unknown) => browseSchema.parse(input))
   .handler(async ({ data }): Promise<BrowseResult> => {
     const mod = await import("@/backend/tmdb.server");
     try {
@@ -40,7 +40,7 @@ export const getGenresFn = createServerFn({ method: "GET" }).handler(async (): P
 });
 
 export const getMovieFn = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ id: z.number().int().positive() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.number().int().positive() }).parse(input))
   .handler(
     async ({
       data,
