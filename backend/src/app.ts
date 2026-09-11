@@ -1,0 +1,45 @@
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import { env } from "./config/env.js";
+
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
+import { apiLimiter } from "./middleware/rateLimit.middleware.js";
+
+import healthRoutes from "./routes/health.routes.js";
+import movieRoutes from "./routes/movie.routes.js";
+import wishlistRoutes from "./routes/wishlist.routes.js";
+
+const app = express();
+
+app.use(helmet());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, postman) or matching FRONTEND_URL
+      if (!origin || origin === env.FRONTEND_URL || env.NODE_ENV === "development") {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS policy violation"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.use(express.json());
+
+app.use("/api", apiLimiter);
+
+app.use("/api", healthRoutes);
+app.use("/api", movieRoutes);
+app.use("/api", wishlistRoutes);
+
+app.use(notFoundHandler);
+
+app.use(errorHandler);
+
+export default app;
