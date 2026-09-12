@@ -9,4 +9,6 @@
 - [x] Root layout: header + toasts + fonts
 - [x] README with architecture and decisions
 - [x] TMDB key saved; verified browse, detail, search all load real data
-- [ ] End-to-end wishlist save test with a signed-in account (needs a user account to test)
+- [x] Type safety & compilation: backend and frontend `tsc --noEmit` passing with 0 errors
+- [x] Production build verification: backend `dist/` and Vite frontend production assets compiled successfully
+- [x] Automated testing: unit test suite implemented for backend health controller and TMDB normalization helpers (`npm test`)

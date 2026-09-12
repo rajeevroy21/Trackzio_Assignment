@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 export function SiteHeader() {
-  const { user, signedIn } = useAuth();
+  const { user, signedIn, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -29,7 +29,7 @@ export function SiteHeader() {
               variant="outline"
               size="sm"
               onClick={() => {
-                void supabase.auth.signOut();
+                void signOut();
               }}
               title={user?.email ?? undefined}
             >

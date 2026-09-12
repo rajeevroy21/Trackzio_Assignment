@@ -26,10 +26,10 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
 export const supabaseAdmin = createClient(
   env.SUPABASE_URL,
-  env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_PUBLISHABLE_KEY,
+  env.SUPABASE_SECRET_KEY,
   {
     global: {
-      fetch: createSupabaseFetch(env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_PUBLISHABLE_KEY),
+      fetch: createSupabaseFetch(env.SUPABASE_SECRET_KEY),
     },
     auth: {
       persistSession: false,

@@ -8,7 +8,7 @@ export async function getWishlist(req: AuthenticatedRequest, res: Response, next
       res.status(401).json({ success: false, error: { message: "Unauthorized", code: "UNAUTHORIZED" } });
       return;
     }
-    const data = await wishlistService.listWishlist(req.supabase);
+    const data = await wishlistService.listWishlist(req.supabase, req.user?.id);
     res.json({ success: true, data });
   } catch (error) {
     next(error);
@@ -50,7 +50,7 @@ export async function removeFromWishlist(req: AuthenticatedRequest, res: Respons
       });
       return;
     }
-    const result = await wishlistService.removeFromWishlist(req.supabase, movieId);
+    const result = await wishlistService.removeFromWishlist(req.supabase, movieId, req.user?.id);
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);

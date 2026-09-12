@@ -2,6 +2,7 @@ import type { Genre, MovieDetail, MoviePage } from "../types/index";
 import { request } from "./api";
 
 export interface BrowseMoviesParams {
+  [key: string]: string | number | undefined;
   page?: number;
   genre?: number;
   sort?: string;
@@ -10,6 +11,7 @@ export interface BrowseMoviesParams {
 }
 
 export interface SearchMoviesParams {
+  [key: string]: string | number | undefined;
   q: string;
   page?: number;
   sort?: string;
