@@ -1,4 +1,4 @@
-# Cineframe (reel-discover-pro)
+# Cineframe (Movie Discovery App)
 
 Cineframe is a full-stack movie discovery application. Browse and search TMDB movies, view detailed movie pages with cast & recommendations, sign in with email and password, and manage your personal wishlist.
 
