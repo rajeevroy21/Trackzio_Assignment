@@ -11,7 +11,7 @@ import movieRoutes from "./routes/movie.routes.js";
 import wishlistRoutes from "./routes/wishlist.routes.js";
 
 const app = express();
-
+app.set("trust proxy", 1);
 app.use(helmet());
 
 app.use(
