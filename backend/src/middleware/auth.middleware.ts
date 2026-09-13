@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import { supabaseAdmin } from "../config/database.js";
+import { createUserClient, supabaseAdmin } from "../config/database.js";
 import type { AuthenticatedUser } from "../types/index.js";
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
   token?: string;
-  supabase?: typeof supabaseAdmin;
+  supabase?: ReturnType<typeof createUserClient>;
 }
 
 export async function requireAuth(
@@ -16,6 +16,7 @@ export async function requireAuth(
   try {
     const authHeader = req.headers.authorization;
 
+    // Check Authorization header
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       res.status(401).json({
         success: false,
@@ -27,6 +28,7 @@ export async function requireAuth(
       return;
     }
 
+    // Extract token
     const token = authHeader.replace("Bearer ", "").trim();
 
     if (!token) {
@@ -40,30 +42,9 @@ export async function requireAuth(
       return;
     }
 
-    // Support local session tokens
-    if (token.startsWith("local_")) {
-      const parts = token.split(":");
-
-      const userId =
-        parts[1] || "00000000-0000-0000-0000-000000000001";
-
-      const email = parts[2] || "user@example.com";
-
-      req.user = {
-        id: userId,
-        email,
-      };
-
-      req.token = token;
-
-      // Use the admin Supabase client
-      req.supabase = supabaseAdmin;
-
-      return next();
-    }
-
-    // Validate the user's Supabase access token
-    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    // Validate token with Supabase
+    const { data, error } =
+      await supabaseAdmin.auth.getUser(token);
 
     if (error || !data?.user) {
       res.status(401).json({
@@ -76,7 +57,7 @@ export async function requireAuth(
       return;
     }
 
-    // Store authenticated user
+    // Store real Supabase user
     req.user = {
       id: data.user.id,
       email: data.user.email,
@@ -84,18 +65,20 @@ export async function requireAuth(
 
     req.token = token;
 
-    // Use the already authenticated admin client
-    req.supabase = supabaseAdmin;
+    // Use user-scoped client for database operations (passes user token for RLS compliance)
+    req.supabase = createUserClient(token);
 
     next();
   } catch (error) {
     res.status(401).json({
       success: false,
       error: {
-        message: error instanceof Error ? error.message : "Unauthorized",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unauthorized",
         code: "UNAUTHORIZED",
       },
     });
   }
 }
-

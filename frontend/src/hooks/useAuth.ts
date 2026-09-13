@@ -44,22 +44,26 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   const updateAuthState = async () => {
-    // Check local session first
+    // Check local session first (skip if it contains dummy local_: token)
     const rawLocal = localStorage.getItem(LOCAL_SESSION_KEY);
     if (rawLocal) {
       try {
         const parsed = JSON.parse(rawLocal) as LocalSession;
-        setUser({
-          id: parsed.user.id,
-          email: parsed.user.email,
-          app_metadata: {},
-          user_metadata: {},
-          aud: "authenticated",
-          created_at: new Date().toISOString(),
-        });
-        setSessionToken(parsed.token);
-        setLoading(false);
-        return;
+        if (parsed.token && !parsed.token.startsWith("local_:")) {
+          setUser({
+            id: parsed.user.id,
+            email: parsed.user.email,
+            app_metadata: {},
+            user_metadata: {},
+            aud: "authenticated",
+            created_at: new Date().toISOString(),
+          });
+          setSessionToken(parsed.token);
+          setLoading(false);
+          return;
+        } else {
+          localStorage.removeItem(LOCAL_SESSION_KEY);
+        }
       } catch {
         localStorage.removeItem(LOCAL_SESSION_KEY);
       }
