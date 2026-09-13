@@ -26,7 +26,7 @@ graph TD
     subgraph Server ["Backend Layer (Server Environment)"]
         TMDBService["TMDB Server Service (tmdb.server.ts)"]
         Cache["Postgres Cache (tmdb_cache table)"]
-        SupabaseServer["Supabase Admin Client (client.server.ts)"]
+        SupabaseServer["Supabase Server Client"]
     end
 
     subgraph External ["External Services"]
@@ -95,7 +95,6 @@ reel-discover-pro/
 │   ├── server.ts                  # Server entrypoint (Nitro / SSR execution environment)
 │   └── start.ts                   # Client entrypoint
 │
-├── drizzle/                       # Database schema migrations & config
 ├── public/                        # Static assets (favicons, icons)
 ├── .env                           # Environment variables configuration
 ├── package.json                   # Project scripts and dependencies
@@ -128,6 +127,13 @@ reel-discover-pro/
 * Wishlist operations (`listWishlistFn`, `addToWishlistFn`, `removeFromWishlistFn`) are protected by `requireSupabaseAuth` middleware in `src/backend/wishlist.functions.ts`.
 * Requests automatically validate the user's Supabase access token before executing database operations.
 
+### 5. Supabase as the Database Layer
+
+* Supabase PostgreSQL is used as the primary database.
+* Database access is handled through the Supabase client.
+* Authentication and user sessions are managed through Supabase Auth.
+* No separate ORM or database migration framework is required.
+
 ---
 
 ## 4. How to Develop & Extend
@@ -145,3 +151,58 @@ reel-discover-pro/
 2. Place custom hooks in `src/frontend/hooks/`.
 3. Re-export them via `src/frontend/index.ts`.
 4. Import server functions using `useServerFn(functionName)` and `useQuery` / `useMutation` inside your route component.
+
+---
+
+## 5. Database Architecture
+
+The application uses **Supabase PostgreSQL** as the database layer.
+
+```text
+Frontend
+   │
+   ▼
+TanStack Start Server Functions
+   │
+   ▼
+Backend Services
+   │
+   ├── TMDB Cache
+   │
+   └── Wishlist Data
+          │
+          ▼
+   Supabase PostgreSQL
+```
+
+### Main Database Responsibilities
+
+* Store user wishlist information.
+* Store cached TMDB responses.
+* Manage user authentication data through Supabase Auth.
+* Enforce database access rules using Supabase Row Level Security (RLS).
+
+---
+
+## 6. Technology Stack
+
+| Layer                | Technology                      |
+| -------------------- | ------------------------------- |
+| Frontend             | React 19                        |
+| Routing              | TanStack Router                 |
+| Full-Stack Framework | TanStack Start                  |
+| Build Tool           | Vite                            |
+| Styling              | Tailwind CSS                    |
+| UI Components        | Radix UI / Shadcn UI            |
+| Server Functions     | TanStack Start Server Functions |
+| Backend              | Node.js / TanStack Start Server |
+| Database             | Supabase PostgreSQL             |
+| Authentication       | Supabase Auth                   |
+| External API         | TMDB API                        |
+| Data Fetching        | TanStack Query                  |
+| Language             | TypeScript                      |
+
+```
+
+This version has **no Lovable references and no Drizzle references**, including the directory tree and database architecture.
+```
