@@ -6,12 +6,13 @@ This document provides a complete guide to the architecture, layer separation, d
 
 ## 1. High-Level Architecture Overview
 
-The application is built using a modern full-stack architecture powered by **TanStack Start**, **Vite**, **React 19**, **Tailwind CSS**, and **Supabase**. 
+The application is built using a modern full-stack architecture powered by **TanStack Start**, **Vite**, **React 19**, **Tailwind CSS**, and **Supabase**.
 
 To maintain clean separation of concerns and high maintainability, the codebase is strictly partitioned into clear architectural layers:
 
 ```mermaid
 graph TD
+
     subgraph Client ["Frontend Layer (Browser)"]
         UI["React UI Components (MovieCard, SiteHeader, etc.)"]
         Pages["Route Views (src/routes/)"]
@@ -47,8 +48,9 @@ graph TD
 
 ## 2. Directory Layout & Layer Responsibilities
 
-```
+```text
 reel-discover-pro/
+
 ├── src/
 │   ├── frontend/                  # FRONTEND LAYER (Client Presentation UI)
 │   │   ├── components/            # React UI Components
@@ -59,7 +61,7 @@ reel-discover-pro/
 │   │   ├── hooks/                 # React Custom Hooks
 │   │   │   ├── useAuth.ts         # User authentication state & session hook
 │   │   │   ├── useWishlist.ts     # Client wishlist query & mutation logic (React Query)
-│   │   │   ├── useDebouncedValue.ts# Input debouncing hook for search
+│   │   │   ├── useDebouncedValue.ts # Input debouncing hook for search
 │   │   │   └── use-mobile.tsx     # Mobile viewport detection hook
 │   │   └── index.ts               # Barrel export for frontend components & hooks
 │   │
@@ -74,8 +76,7 @@ reel-discover-pro/
 │   │   └── index.ts               # Barrel export for shared data structures
 │   │
 │   ├── integrations/              # THIRD-PARTY INTEGRATION HELPERS
-│   │   ├── supabase/              # Supabase Client, Auth middleware, and Server Admin
-│   │   └── lovable/               # Lovable cloud integration helpers
+│   │   └── supabase/              # Supabase Client, Auth middleware, and Server Admin
 │   │
 │   ├── routes/                    # ROUTING LAYER (TanStack Router View Controllers)
 │   │   ├── __root.tsx             # Root layout shell, query client provider & header
@@ -86,7 +87,7 @@ reel-discover-pro/
 │   │       └── wishlist.tsx       # User Wishlist View
 │   │
 │   ├── lib/                       # SHARED UTILITIES
-│   │   ├── utils.ts               # Tailwind class merge helper (`cn`)
+│   │   ├── utils.ts               # Tailwind class merge helper (cn)
 │   │   ├── error-capture.ts       # Global error logger
 │   │   └── error-page.ts          # Fallback error page UI
 │   │
@@ -106,35 +107,41 @@ reel-discover-pro/
 ## 3. Core Architectural Rules
 
 ### 1. Zero Direct API Leakage to the Client
-- The browser **never** talks directly to TMDB API endpoints.
-- All requests flow through `src/backend/tmdb.functions.ts` server functions.
-- `TMDB_API_KEY` stays strictly on the server node environment.
+
+* The browser **never** talks directly to TMDB API endpoints.
+* All requests flow through `src/backend/tmdb.functions.ts` server functions.
+* `TMDB_API_KEY` stays strictly on the server node environment.
 
 ### 2. Payload Normalization
-- Upstream TMDB payloads can be incomplete or inconsistent.
-- `src/backend/tmdb.server.ts` normalizes all raw API payloads into strongly typed `MovieSummary` or `MovieDetail` shapes defined in `src/shared/tmdb-types.ts`.
+
+* Upstream TMDB payloads can be incomplete or inconsistent.
+* `src/backend/tmdb.server.ts` normalizes all raw API payloads into strongly typed `MovieSummary` or `MovieDetail` shapes defined in `src/shared/tmdb-types.ts`.
 
 ### 3. Server-Side Caching & Resiliency
-- TMDB API responses are cached in Supabase Postgres (`tmdb_cache` table).
-- Frequent requests (e.g. popular movies or genre lists) serve cached data instantly.
-- In case of TMDB rate limits (HTTP 429) or upstream outage, stale cached data is served automatically to preserve UX.
+
+* TMDB API responses are cached in Supabase Postgres (`tmdb_cache` table).
+* Frequent requests, such as popular movies or genre lists, serve cached data instantly.
+* In case of TMDB rate limits (HTTP 429) or upstream outage, stale cached data is served automatically to preserve UX.
 
 ### 4. Authenticated RPC Middleware
-- Wishlist operations (`listWishlistFn`, `addToWishlistFn`, `removeFromWishlistFn`) are protected by `requireSupabaseAuth` middleware in `src/backend/wishlist.functions.ts`.
-- Requests automatically validate the user's Supabase access token before executing database operations.
+
+* Wishlist operations (`listWishlistFn`, `addToWishlistFn`, `removeFromWishlistFn`) are protected by `requireSupabaseAuth` middleware in `src/backend/wishlist.functions.ts`.
+* Requests automatically validate the user's Supabase access token before executing database operations.
 
 ---
 
 ## 4. How to Develop & Extend
 
 ### Adding a New Backend RPC Endpoint
+
 1. Define any shared types or schemas in `src/shared/tmdb-types.ts`.
 2. Implement server-only logic or database queries in `src/backend/tmdb.server.ts` or `src/backend/wishlist.functions.ts`.
 3. Wrap the server handler with `createServerFn({ method: "GET" | "POST" })` and `.validator(...)`.
 4. Re-export the function in `src/backend/index.ts`.
 
 ### Adding a New Frontend Component or View
-1. Place reusable UI elements in `src/frontend/components/` (or `src/frontend/components/ui/` for primitives).
+
+1. Place reusable UI elements in `src/frontend/components/` or `src/frontend/components/ui/` for primitives.
 2. Place custom hooks in `src/frontend/hooks/`.
 3. Re-export them via `src/frontend/index.ts`.
 4. Import server functions using `useServerFn(functionName)` and `useQuery` / `useMutation` inside your route component.
