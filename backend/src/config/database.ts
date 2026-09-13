@@ -1,3 +1,4 @@
+
 import { createClient } from "@supabase/supabase-js";
 import { env } from "./env.js";
 
@@ -11,21 +12,3 @@ export const supabaseAdmin = createClient(
     },
   },
 );
-
-export function createAuthenticatedSupabaseClient(token: string) {
-  return createClient(
-    env.SUPABASE_URL,
-    env.SUPABASE_PUBLISHABLE_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    },
-  );
-}
