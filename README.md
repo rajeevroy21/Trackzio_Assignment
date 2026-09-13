@@ -49,7 +49,7 @@ TMDB_API_KEY=your_tmdb_api_key
 
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_PUBLISHABLE_KEY=your_publishable_key
-SUPABASE_SECRET_KEY=your_service_role_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 ### 2. Frontend (`frontend/.env`)

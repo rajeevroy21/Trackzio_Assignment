@@ -25,7 +25,10 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
-const supabaseKey = env.SUPABASE_SECRET_KEY || env.SUPABASE_PUBLISHABLE_KEY;
+const supabaseKey =
+  env.SUPABASE_SECRET_KEY ||
+  env.SUPABASE_SERVICE_ROLE_KEY ||
+  env.SUPABASE_PUBLISHABLE_KEY;
 
 export const supabaseAdmin = createClient(
   env.SUPABASE_URL,
