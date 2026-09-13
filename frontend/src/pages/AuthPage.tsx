@@ -27,8 +27,15 @@ export function AuthPage() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!email.trim() || !password) {
+    const cleanEmail = email.trim();
+
+    if (!cleanEmail || !password) {
       toast.error("Please enter email and password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
       return;
     }
 
@@ -37,7 +44,7 @@ export function AuthPage() {
     try {
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
+          email: cleanEmail,
           password,
         });
 
@@ -46,12 +53,17 @@ export function AuthPage() {
           return;
         }
 
-        // Supabase can require email confirmation.
+        // Email confirmation must be disabled in Supabase
+        // for a session to be returned immediately.
+        if (!data.user) {
+          toast.error("Account was not created. Please try again.");
+          return;
+        }
+
         if (!data.session) {
-          toast.success(
-            "Account created! Please check your email to confirm your account.",
+          toast.error(
+            "Account created, but no session was returned. Disable email confirmation in Supabase.",
           );
-          setMode("signin");
           return;
         }
 
@@ -60,9 +72,9 @@ export function AuthPage() {
         return;
       }
 
-      // Sign in
+      // SIGN IN
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        email: cleanEmail,
         password,
       });
 
@@ -71,7 +83,7 @@ export function AuthPage() {
         return;
       }
 
-      if (!data.session) {
+      if (!data.user || !data.session) {
         toast.error("Unable to create a session. Please try again.");
         return;
       }
@@ -136,12 +148,7 @@ export function AuthPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={busy}>
-            {busy && (
-              <Loader2
-                className="size-4 animate-spin"
-                aria-hidden
-              />
-            )}
+            {busy && <Loader2 className="size-4 animate-spin" aria-hidden />}
 
             {mode === "signin" ? "Sign In" : "Create Account"}
           </Button>
