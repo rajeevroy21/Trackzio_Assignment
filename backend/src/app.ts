@@ -17,11 +17,18 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, postman) or matching FRONTEND_URL
-      if (!origin || origin === env.FRONTEND_URL || env.NODE_ENV === "development") {
+      const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
+      const cleanFrontendUrl = env.FRONTEND_URL ? env.FRONTEND_URL.replace(/\/$/, "") : "";
+
+      if (
+        !origin ||
+        cleanOrigin === cleanFrontendUrl ||
+        env.NODE_ENV === "development" ||
+        cleanOrigin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
-        callback(new Error("CORS policy violation"));
+        callback(new Error(`CORS policy violation for origin: ${origin}`));
       }
     },
     credentials: true,

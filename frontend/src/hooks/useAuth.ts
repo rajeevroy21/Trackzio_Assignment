@@ -38,6 +38,15 @@ export function clearLocalSession() {
   window.dispatchEvent(new Event("cineframe-auth-change"));
 }
 
+export async function getFreshToken(): Promise<string | null> {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [sessionToken, setSessionToken] = useState<string | null>(null);

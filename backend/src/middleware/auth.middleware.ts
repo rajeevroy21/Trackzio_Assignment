@@ -29,7 +29,10 @@ export async function requireAuth(
     }
 
     // Extract token
-    const token = authHeader.replace("Bearer ", "").trim();
+    let token = authHeader.replace(/^Bearer\s+/i, "").trim();
+    if (token.toLowerCase().startsWith("bearer ")) {
+      token = token.substring(7).trim();
+    }
 
     if (!token) {
       res.status(401).json({
@@ -47,6 +50,11 @@ export async function requireAuth(
       await supabaseAdmin.auth.getUser(token);
 
     if (error || !data?.user) {
+      console.error(
+        "[Auth Middleware] Supabase auth.getUser failed:",
+        error?.message || "No user found for provided token",
+        `| Code: ${error?.code ?? "N/A"}`
+      );
       res.status(401).json({
         success: false,
         error: {

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { addToWishlist, fetchWishlist, removeFromWishlist } from "../services/wishlistApi";
 import type { MovieSummary, WishlistEntry } from "../types/index";
-import { useAuth } from "./useAuth";
+import { getFreshToken, useAuth } from "./useAuth";
 
 export const wishlistQueryKey = ["wishlist"] as const;
 
@@ -12,9 +12,10 @@ export function useWishlist() {
 
   const query = useQuery<WishlistEntry[]>({
     queryKey: wishlistQueryKey,
-    queryFn: () => {
-      if (!token) throw new Error("No authentication token");
-      return fetchWishlist(token);
+    queryFn: async () => {
+      const activeToken = (await getFreshToken()) || token;
+      if (!activeToken) throw new Error("No authentication token");
+      return fetchWishlist(activeToken);
     },
     enabled: signedIn && Boolean(token),
     staleTime: 30_000,
@@ -25,12 +26,13 @@ export function useWishlist() {
 
   const toggle = useMutation({
     mutationFn: async (movie: MovieSummary) => {
-      if (!token) throw new Error("Please sign in to update your wishlist.");
+      const activeToken = (await getFreshToken()) || token;
+      if (!activeToken) throw new Error("Please sign in to update your wishlist.");
       if (ids.has(movie.id)) {
-        await removeFromWishlist(movie.id, token);
+        await removeFromWishlist(movie.id, activeToken);
         return { removed: true, movie };
       }
-      await addToWishlist(movie, token);
+      await addToWishlist(movie, activeToken);
       return { removed: false, movie };
     },
     onSuccess: (result) => {
